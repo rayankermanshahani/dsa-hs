@@ -1,3 +1,5 @@
+# dsa-hs
+
 A collection of core data structures and algorithms implemented in idiomatic Haskell.
 
 #### Algorithms:

@@ -22,8 +22,3 @@ tests =
         "Algorithms"
         []
     ]
-
--- BinarySearchSpec.tests
--- add more algorithms tests here
-
--- add more test groups if / as needed

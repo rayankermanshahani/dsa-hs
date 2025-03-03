@@ -42,3 +42,19 @@ A collection of core data structures and algorithms implemented in idiomatic Has
 3. Greedy Algorithms
 4. Backtracking
 5. Sliding Window
+
+## Instructions
+```
+# clone repo
+git clone https://github.com/rayankermanshahani/dsa-hs && cd dsa-hs
+
+# update and build dependencies
+cabal update
+cabal build
+
+# run all tests
+cabal test
+
+# run all demos
+cabal run dsa-hs 
+

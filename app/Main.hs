@@ -23,9 +23,6 @@ showUsage = do
   putStrLn ""
   putStrLn "Testing:"
   putStrLn "  cabal test                                Run all tests"
-  putStrLn ""
-  putStrLn "Benchmarking:"
-  putStrLn "  cabal bench                               Run all benchmarks"
 
 demoArray :: IO ()
 demoArray = do

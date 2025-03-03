@@ -1,0 +1,123 @@
+cabal-version:      3.0
+name:               dsa-hs
+version:            0.1.0.0
+synopsis:           Data Structures and Algorithms in Haskell
+description:        A collection of core data structures and algorithms
+                    implemented in idiomatic Haskell.
+license:            BSD-3-Clause
+license-file:       LICENSE
+author:             rayankermanshahani
+maintainer:         rayan.k@gmx.com
+build-type:         Simple
+extra-doc-files:    CHANGELOG.md
+
+-- some compiler settings
+common common-settings
+  default-language: Haskell2010
+  ghc-options:      -Wall
+                    -Wcompat
+                    -Widentities
+                    -Wincomplete-record-updates
+                    -Wincomplete-uni-patterns
+                    -Wmissing-export-lists
+                    -Wmissing-home-modules
+                    -Wpartial-fields
+                    -Wredundant-constraints
+
+-- common dependencies
+common common-deps
+  build-depends:    base ^>=4.17.2.1 && <5
+                  , containers
+                  , unordered-containers
+                  , array
+                  , mtl
+                  , vector
+                  , text
+
+-- dependencies for testing
+common test-deps
+  build-depends:    QuickCheck
+                  , quickcheck-instances
+                  , tasty
+                  , tasty-hunit
+                  , tasty-quickcheck
+                  , HUnit
+
+-- dependencies for benchmarking
+common bench-deps
+  build-depends:    criterion
+                  , deepseq
+
+-- main library component
+library
+  import:           common-settings
+                  , common-deps
+  hs-source-dirs:   src
+  exposed-modules:  DataStructures.Array,
+                    -- the following are commented out until implemented
+
+                    -- DataStructures.LinkedList
+                    -- DataStructures.Stack
+                    -- DataStructures.Queue
+                    -- DataStructures.HashMap
+                    -- DataStructures.BinaryTree
+                    -- DataStructures.BST
+                    -- DataStructures.Heap
+                    -- DataStructures.Graph
+                    -- DataStructures.Trie
+
+                    -- Algorithms.BinarySearch
+                    -- Algorithms.BFS
+                    -- Algorithms.DFS
+                    -- Algorithms.Dijkstra
+                    -- Algorithms.Kruskal
+                    -- Algorithms.Prim
+                    -- Algorithms.BellmanFord
+                    -- Algorithms.FloydWarshall
+                    -- Algorithms.QuickSort
+                    -- Algorithms.MergeSort
+                    -- Algorithms.HeapSort
+                    -- Algorithms.InsertionSort
+                    -- Algorithms.TopologicalSort
+                    -- Algorithms.UnionFind
+                    -- Algorithms.KMP
+                    -- Algorithms.RabinKarp
+                    -- Algorithms.Manacher
+                    -- Algorithms.Kadane
+                    -- Algorithms.BoyerMooreMV
+
+-- main test suite that runs all tests
+test-suite tests
+  import:           common-settings
+                  , common-deps
+                  , test-deps
+  type:             exitcode-stdio-1.0
+  main-is:          Main.hs
+  other-modules:    DataStructures.ArraySpec
+                    -- add more test modules here as they are created
+                    -- Algorithms.BinarySearchSpec
+  build-depends:    dsa-hs
+  hs-source-dirs:   test
+
+-- main benchmark suite that runs all benchmarks
+benchmark benchmarks
+  import:           common-settings
+                  , common-deps
+                  , bench-deps
+  type:             exitcode-stdio-1.0
+  main-is:          Main.hs
+  other-modules:    DataStructures.ArrayBench
+                    -- add more test modules here as they are created
+                    -- Algorithms.BinarySearchBench
+  build-depends:    dsa-hs
+  hs-source-dirs:   benchmarks
+
+-- main executable component
+executable dsa-hs
+  import:           common-settings
+                  , common-deps
+  main-is:          Main.hs
+  build-depends:    dsa-hs
+                  , pretty-show
+  hs-source-dirs:   app
+  ghc-options:      -O2 -threaded -rtsopts -with-rtsopts=-N

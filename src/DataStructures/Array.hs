@@ -50,15 +50,6 @@ empty =
       arraySize = 0
     }
 
--- | helper function to check if an index is within bounds
-isSafeIdx :: Int -> Array a -> Bool
-isSafeIdx i arr = i >= 0 && i < arraySize arr
-
-withSafeIdx :: (Array a -> Array a) -> Int -> Array a -> Array a
-withSafeIdx op i arr
-  | isSafeIdx i arr = op arr
-  | otherwise = arr
-
 -- | look up an element by index
 lookup :: Int -> Array a -> Maybe a
 lookup i arr

@@ -24,7 +24,6 @@ module DataStructures.Array
 where
 
 import qualified Data.Array as A
-import Data.Maybe (fromMaybe)
 import Prelude hiding (lookup)
 
 -- | a simple array implementation using Data.Array

@@ -36,15 +36,64 @@ tests =
     "Array"
     [ testGroup
         "Unit Tests"
-        [ testCase "Example function returns correct value" $
-            example 42 @?= 42
+        [ testCase "Empty array has size 0" $
+            size empty @?= 0,
+          testCase "fromList creates array with correct size" $
+            size (fromList [1, 2, 3 :: Int]) @?= 3,
+          testCase "lookup returns the correct elements" $ do
+            let arr = fromList [10, 20, 30, 40 :: Int]
+            lookup 0 arr @?= Just 10
+            lookup 1 arr @?= Just 20
+            lookup 2 arr @?= Just 30
+            lookup 3 arr @?= Just 40
+            lookup (-1) arr @?= Nothing,
+          testCase "insert adds elements at specific index" $ do
+            let arr = fromList [1, 2, 4 :: Int]
+            let arr' = insert 2 3 arr
+            toList arr' @?= [1, 2, 3, 4],
+          testCase "insert ignores out of bounds index" $ do
+            let arr = fromList [1, 2, 3 :: Int]
+            let arr' = insert 5 99 arr
+            toList arr' @?= [1, 2, 3],
+          testCase "delete removes elements at specific index" $ do
+            let arr = fromList [1, 2, 3, 4 :: Int]
+            let arr' = delete 1 arr
+            toList arr' @?= [1, 3, 4],
+          testCase "delete ignores out of bounds index" $ do
+            let arr = fromList [1, 2, 3 :: Int]
+            let arr' = delete 5 arr
+            toList arr' @?= [1, 2, 3],
+          testCase "update changes element at specific index" $ do
+            let arr = fromList [1, 2, 3 :: Int]
+            let arr' = update 1 69 arr
+            toList arr' @?= [1, 69, 3],
+          testCase "update ignores out of bounds index" $ do
+            let arr = fromList [1, 2, 3 :: Int]
+            let arr' = update 5 69 arr
+            toList arr' @?= [1, 2, 3],
+          testCase "toList roundtrip" $ do
+            let xs = [1, 2, 3, 4 :: Int]
+            let arr = fromList xs
+            toList arr @?= xs
+
             -- add more unit tests here
         ],
       testGroup
         "Property Tests"
-        [ testProperty "Example function preserves input" $
-            \x -> example x == x
+        [ testProperty "fromList/toList roundtrip" $
+            \(xs :: [Int]) -> toList (fromList xs) === xs,
+          testProperty "size matches list length" $
+            \(xs :: [Int]) -> size (fromList xs) === length xs
             -- add more property tests here
         ]
         --  add more test groups here as needed
     ]
+
+-- | helper function to generate indices within a specific range
+choose :: (Int, Int) -> Gen Int
+choose (min', max') = arbitrary `suchThat` \n -> n >= min' && n <= max'
+
+-- | implication operator for property tests
+(==>) :: Bool -> Property -> Property
+False ==> _ = property True
+True ==> prop = prop

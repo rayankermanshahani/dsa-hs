@@ -57,4 +57,9 @@ cabal test
 
 # run all demos
 cabal run dsa-hs 
+```
 
+## Prerequisites
+- [cabal 3.0](https://www.haskell.org/cabal/)
+- [ghc 9.4.8](https://www.haskell.org/ghc/)
+- [stackage lts-21.25](https://www.stackage.org/lts-21.25)

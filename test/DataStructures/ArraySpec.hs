@@ -5,8 +5,7 @@
 module DataStructures.ArraySpec (tests) where
 
 import DataStructures.Array
-  ( Array,
-    delete,
+  ( delete,
     empty,
     fromList,
     insert,
@@ -16,19 +15,11 @@ import DataStructures.Array
     update,
   )
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.HUnit (assertBool, testCase, (@?=))
+import Test.Tasty.HUnit (testCase, (@?=))
 import Test.Tasty.QuickCheck
-  ( Arbitrary,
-    Gen,
-    Property,
-    arbitrary,
-    choose,
-    counterexample,
+  ( choose,
     forAll,
-    property,
-    suchThat,
     testProperty,
-    (.&&.),
     (===),
     (==>),
   )
@@ -117,7 +108,3 @@ tests =
         ]
         --  add more test groups here as needed
     ]
-
--- | helper function to generate indices within a specific range
--- choose :: (Int, Int) -> Gen Int
--- choose (min', max') = arbitrary `suchThat` \n -> n >= min' && n <= max'

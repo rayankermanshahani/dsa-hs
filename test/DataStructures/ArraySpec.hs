@@ -1,6 +1,9 @@
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module DataStructures.ArraySpec (tests) where
 
-import qualified Data.List as List
 import DataStructures.Array
   ( Array,
     delete,
@@ -19,6 +22,7 @@ import Test.Tasty.QuickCheck
     Gen,
     Property,
     arbitrary,
+    choose,
     counterexample,
     forAll,
     property,
@@ -26,6 +30,7 @@ import Test.Tasty.QuickCheck
     testProperty,
     (.&&.),
     (===),
+    (==>),
   )
 import Prelude hiding (lookup)
 
@@ -83,17 +88,36 @@ tests =
         [ testProperty "fromList/toList roundtrip" $
             \(xs :: [Int]) -> toList (fromList xs) === xs,
           testProperty "size matches list length" $
-            \(xs :: [Int]) -> size (fromList xs) === length xs
-            -- add more property tests here
+            \(xs :: [Int]) -> size (fromList xs) === length xs,
+          testProperty "lookup returns correct elements" $
+            \(xs :: [Int]) ->
+              not (null xs) ==>
+                forAll
+                  (choose (0, length xs - 1))
+                  (\i -> lookup i (fromList xs) === Just (xs !! i)),
+          testProperty "insert followed by lookup returns inserted element" $
+            \(xs :: [Int]) (x :: Int) ->
+              not (null xs) ==>
+                forAll
+                  (choose (0, length xs - 1))
+                  (\i -> lookup i (insert i x (fromList xs)) === Just x),
+          testProperty "delete reduces size by 1" $
+            \(xs :: [Int]) ->
+              not (null xs) ==>
+                forAll
+                  (choose (0, length xs - 1))
+                  (\i -> size (delete i (fromList xs)) === size (fromList xs) - 1),
+          testProperty "update preserves size" $
+            \(xs :: [Int]) (x :: Int) ->
+              not (null xs) ==>
+                forAll
+                  (choose (0, length xs - 1))
+                  (\i -> size (update i x (fromList xs)) === size (fromList xs))
+                  -- add more property tests here
         ]
         --  add more test groups here as needed
     ]
 
 -- | helper function to generate indices within a specific range
-choose :: (Int, Int) -> Gen Int
-choose (min', max') = arbitrary `suchThat` \n -> n >= min' && n <= max'
-
--- | implication operator for property tests
-(==>) :: Bool -> Property -> Property
-False ==> _ = property True
-True ==> prop = prop
+-- choose :: (Int, Int) -> Gen Int
+-- choose (min', max') = arbitrary `suchThat` \n -> n >= min' && n <= max'

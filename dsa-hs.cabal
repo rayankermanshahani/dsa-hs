@@ -54,9 +54,9 @@ library
                   , common-deps
   hs-source-dirs:   src
   exposed-modules:  DataStructures.Array,
+                    DataStructures.LinkedList
                     -- the following are commented out until implemented
 
-                    -- DataStructures.LinkedList
                     -- DataStructures.Stack
                     -- DataStructures.Queue
                     -- DataStructures.HashMap
@@ -94,6 +94,7 @@ test-suite tests
   type:             exitcode-stdio-1.0
   main-is:          Main.hs
   other-modules:    DataStructures.ArraySpec
+                    DataStructures.LinkedListSpec
                     -- add more test modules here as they are created
                     -- Algorithms.BinarySearchSpec
   build-depends:    dsa-hs

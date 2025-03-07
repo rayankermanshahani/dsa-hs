@@ -49,7 +49,7 @@ module DataStructures.LinkedList
 
     -- * dll traversal
     doublyForward,
-    doublyBackard,
+    doublyBackward,
     doublyAtStart,
     doublyAtEnd,
     doublyCurrent,
@@ -59,8 +59,9 @@ module DataStructures.LinkedList
   )
 where
 
-import qualified Data.List as List
-import Prelude hiding (head, init, last, tail)
+import Data.Maybe (listToMaybe, maybeToList)
+
+-- import Prelude hiding (head, init, last, tail)
 
 -- | a singly linked list
 data SinglyLinkedList a = SNil | SCons a (SinglyLinkedList a)
@@ -98,7 +99,7 @@ singlyHead SNil = Nothing
 singlyHead (SCons x _) = Just x
 
 -- | get tail of a singly linked list
-singlyTail :: SinglyLinkedList a -> Maybe a
+singlyTail :: SinglyLinkedList a -> Maybe (SinglyLinkedList a)
 singlyTail SNil = Nothing
 singlyTail (SCons _ xs) = Just xs
 
@@ -127,12 +128,12 @@ singlyUpdate i x (SCons y ys)
   | otherwise = SCons y ys
 
 -- | append an element to a singly linked list
-singlyAppend :: a -> SinglyLinkedList a
+singlyAppend :: a -> SinglyLinkedList a -> SinglyLinkedList a
 singlyAppend x SNil = SCons x SNil
 singlyAppend x (SCons y ys) = SCons y (singlyAppend x ys)
 
 -- | prepend an element to a singly linked list
-singlyPrepend :: a -> SinglyLinkedList a
+singlyPrepend :: a -> SinglyLinkedList a -> SinglyLinkedList a
 singlyPrepend = SCons
 
 -- | a doubly linked list represented as a zipper
@@ -187,29 +188,139 @@ doublyLookup i dll
 doublySize :: DoublyLinkedList a -> Int
 doublySize = length . doublyToList
 
--- | get head of doubly linked list
+-- | get head of a doubly linked list
 doublyHead :: DoublyLinkedList a -> Maybe a
-doublyHead dll = listToMaybe . doublyToLi
+doublyHead = listToMaybe . doublyToList
 
--- doublyTail,
--- doublyLast,
--- doublyInit,
---
--- -- * dll modification
--- doublyInsert,
--- doublyDelete,
--- doublyUpdate,
--- doublyAppend,
--- doublyPrepend,
---
--- -- * dll traversal
--- doublyForward,
--- doublyBackard,
--- doublyAtStart,
--- doublyAtEnd,
--- doublyCurrent,
+-- | get last element of a doubly linked list
+doublyLast :: DoublyLinkedList a -> Maybe a
+doublyLast dll =
+  case reverse (doublyToList dll) of
+    (x : _) -> Just x
+    [] -> Nothing
+
+-- | get tail of a doubly linked list
+doublyTail :: DoublyLinkedList a -> DoublyLinkedList a
+doublyTail dll =
+  case doublyToList dll of
+    (_ : xs) -> doublyFromList xs
+    [] -> doublyEmpty
+
+-- | get all but the last element of a doubly linked list
+doublyInit :: DoublyLinkedList a -> DoublyLinkedList a
+doublyInit dll =
+  case doublyToList dll of
+    xs
+      | null xs -> doublyEmpty
+      | otherwise -> doublyFromList $ init xs
+
+-- | insert an element at specific index in a doubly linked list
+doublyInsert :: Int -> a -> DoublyLinkedList a -> DoublyLinkedList a
+doublyInsert i x dll
+  | i < 0 = dll
+  | otherwise =
+      let lst = doublyToList dll
+          (before, after) = splitAt i lst
+       in doublyFromList $ before ++ x : after
+
+-- | delete an element at specific index from a doubly linked list
+doublyDelete :: Int -> DoublyLinkedList a -> DoublyLinkedList a
+doublyDelete i dll
+  | i < 0 || i >= doublySize dll = dll
+  | otherwise =
+      let lst = doublyToList dll
+       in case splitAt i lst of
+            (before, _ : after) -> doublyFromList $ before ++ after
+            _ -> dll -- return unchanged dll if index is out of bounds
+
+-- | update an element at specific index from a doubly linked list
+doublyUpdate :: Int -> a -> DoublyLinkedList a -> DoublyLinkedList a
+doublyUpdate i x dll
+  | i < 0 || i >= doublySize dll = dll
+  | otherwise =
+      let lst = doublyToList dll
+       in case splitAt i lst of
+            (before, _ : after) -> doublyFromList $ before ++ x : after
+            _ -> dll -- return unchanged dll if index is out of bounds
+
+-- | append an element to the end of a doubly linked list
+doublyAppend :: a -> DoublyLinkedList a -> DoublyLinkedList a
+doublyAppend x dll =
+  let lst = doublyToList dll
+   in doublyFromList (lst ++ [x])
+
+-- | prepend an element to the beginning of a doubly linked list
+doublyPrepend :: a -> DoublyLinkedList a -> DoublyLinkedList a
+doublyPrepend x dll =
+  let lst = doublyToList dll
+   in doublyFromList (x : lst)
+
+-- | move focus forward in the doubly linked list
+doublyForward :: DoublyLinkedList a -> DoublyLinkedList a
+doublyForward
+  dll@DoublyLinkedList -- list has no focus element and is empty to the right
+    { leftElements = _,
+      focusElement = Nothing,
+      rightElements = []
+    } = dll
+doublyForward
+  DoublyLinkedList -- list has a focus element but is empty to the right
+    { leftElements = left,
+      focusElement = focus,
+      rightElements = []
+    } =
+    DoublyLinkedList
+      { leftElements = maybe left (: left) focus,
+        focusElement = Nothing,
+        rightElements = []
+      }
+doublyForward
+  DoublyLinkedList -- list has elements to the right
+    { leftElements = left,
+      focusElement = focus,
+      rightElements = (r : rs)
+    } =
+    DoublyLinkedList
+      { leftElements = maybe left (: left) focus,
+        focusElement = Just r,
+        rightElements = rs
+      }
+
+-- | move focus backward in the doubly linked list
+doublyBackward :: DoublyLinkedList a -> DoublyLinkedList a
+doublyBackward
+  dll@DoublyLinkedList -- list is empty to the left (ie. at the start of the list)
+    { leftElements = [],
+      focusElement = _,
+      rightElements = _
+    } = dll
+doublyBackward
+  DoublyLinkedList -- list has elements to the left
+    { leftElements = (l : ls),
+      focusElement = focus,
+      rightElements = right
+    } =
+    DoublyLinkedList
+      { leftElements = ls,
+        focusElement = Just l,
+        rightElements = maybe right (: right) focus
+      }
+
+-- | check if focus is at the start of the doubly linked list
+doublyAtStart :: DoublyLinkedList a -> Bool
+doublyAtStart DoublyLinkedList {leftElements = []} = True
+doublyAtStart _ = False
+
+-- | check if focus is at the end of the doubly linked list
+doublyAtEnd :: DoublyLinkedList a -> Bool
+doublyAtEnd DoublyLinkedList {focusElement = Nothing, rightElements = []} = True
+doublyAtEnd DoublyLinkedList {rightElements = []} = True
+doublyAtEnd _ = False
+
+-- | get the current element at the focus
+doublyCurrent :: DoublyLinkedList a -> Maybe a
+doublyCurrent = focusElement
 
 -- | example function for testing
 example :: a -> a
-
-example id
+example = id

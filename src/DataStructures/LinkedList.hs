@@ -106,26 +106,27 @@ singlyTail (SCons _ xs) = Just xs
 -- | insert element at a specified index in a singly linked list
 singlyInsert :: Int -> a -> SinglyLinkedList a -> SinglyLinkedList a
 singlyInsert 0 x xs = SCons x xs -- insert at head
-singlyInsert _ x SNil = SCons x SNil -- insert at end
+singlyInsert _ x SNil = SCons x SNil -- insert into empty list
 singlyInsert i x (SCons y ys)
-  | i > 0 = SCons y (singlyInsert (i - 1) x ys)
-  | otherwise = SCons x (SCons y ys) -- return unchanged list for negative indices
+  | i > 0 && i <= singlySize ys + 1 = SCons y (singlyInsert (i - 1) x ys)
+  | i <= 0 = SCons y ys
+  | otherwise = SCons y ys -- return unchanged liust if index is negative
 
 -- | delete element at a specific index from a singly linked list
 singlyDelete :: Int -> SinglyLinkedList a -> SinglyLinkedList a
 singlyDelete _ SNil = SNil
 singlyDelete 0 (SCons _ xs) = xs
 singlyDelete i (SCons x xs)
-  | i > 0 = SCons x (singlyDelete (i - 1) xs)
-  | otherwise = SCons x xs
+  | i > 0 && i <= singlySize xs + 1 = SCons x (singlyDelete (i - 1) xs)
+  | otherwise = SCons x xs -- return unchanged list if index is negative
 
 -- | update element at a specific index in a singly linked list
 singlyUpdate :: Int -> a -> SinglyLinkedList a -> SinglyLinkedList a
 singlyUpdate _ _ SNil = SNil
 singlyUpdate 0 x (SCons _ ys) = SCons x ys
 singlyUpdate i x (SCons y ys)
-  | i > 0 = SCons y (singlyUpdate (i - 1) x ys)
-  | otherwise = SCons y ys
+  | i > 0 && i <= singlySize ys + 1 = SCons y (singlyUpdate (i - 1) x ys)
+  | otherwise = SCons y ys -- return unchanged list if index is negative
 
 -- | append an element to a singly linked list
 singlyAppend :: a -> SinglyLinkedList a -> SinglyLinkedList a

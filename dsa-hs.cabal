@@ -53,10 +53,10 @@ library
   import:           common-settings
                   , common-deps
   hs-source-dirs:   src
-  exposed-modules:  DataStructures.Array,
-                    DataStructures.LinkedList
+  exposed-modules:  DataStructures.Array
+                  , DataStructures.LinkedList
+                  , Algorithms.BinarySearch
                     -- the following are commented out until implemented
-
                     -- DataStructures.Stack
                     -- DataStructures.Queue
                     -- DataStructures.HashMap
@@ -65,8 +65,6 @@ library
                     -- DataStructures.Heap
                     -- DataStructures.Graph
                     -- DataStructures.Trie
-
-                    -- Algorithms.BinarySearch
                     -- Algorithms.BFS
                     -- Algorithms.DFS
                     -- Algorithms.Dijkstra
@@ -94,9 +92,9 @@ test-suite tests
   type:             exitcode-stdio-1.0
   main-is:          Main.hs
   other-modules:    DataStructures.ArraySpec
-                    DataStructures.LinkedListSpec
+                  , DataStructures.LinkedListSpec
+                  , Algorithms.BinarySearchSpec
                     -- add more test modules here as they are created
-                    -- Algorithms.BinarySearchSpec
   build-depends:    dsa-hs
   hs-source-dirs:   test
 

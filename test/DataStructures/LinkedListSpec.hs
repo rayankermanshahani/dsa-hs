@@ -29,9 +29,9 @@ tests =
               testCase "singlyLookup returns correct elements" $ do
                 let lst = singlyFromList [10, 20, 30, 40 :: Int]
                 singlyLookup 0 lst @?= Just 10
-                singlyLookup 1 lst @?= Just 10
-                singlyLookup 2 lst @?= Just 10
-                singlyLookup 3 lst @?= Just 10
+                singlyLookup 1 lst @?= Just 20
+                singlyLookup 2 lst @?= Just 30
+                singlyLookup 3 lst @?= Just 40
                 singlyLookup 4 lst @?= Nothing
                 singlyLookup (-1) lst @?= Nothing,
               testCase "singlyHead returns the first element" $ do

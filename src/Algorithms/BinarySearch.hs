@@ -61,7 +61,8 @@ binarySearchListBy cmp x xs = go 0 (length xs - 1)
 
 -- | find index of first element greater than or equal to target in a sorted array
 lowerBound :: (Ord a) => a -> Array.Array a -> Int
-lowerBound x arr = go 0 (Array.size arr - 1)
+lowerBound _ arr | Array.size arr == 0 = 0
+lowerBound x arr = go 0 (Array.size arr)
   where
     go lo hi
       | lo >= hi = lo
@@ -76,7 +77,8 @@ lowerBound x arr = go 0 (Array.size arr - 1)
 
 -- | find index of first element strictly greater than target in a sorted array
 upperBound :: (Ord a) => a -> Array.Array a -> Int
-upperBound x arr = go 0 (Array.size arr - 1)
+upperBound _ arr | Array.size arr == 0 = 0
+upperBound x arr = go 0 (Array.size arr)
   where
     go lo hi
       | lo >= hi = lo
